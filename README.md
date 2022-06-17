@@ -1,6 +1,7 @@
-# A sample Python project
+# A Python tool for High-Throughput Virtual Screening of organic molecules driven by structural mutation and machine learning.
 
-![Python Logo](https://www.python.org/static/community_logos/python-logo.png "Sample inline image")
+![salam Logo](https://github.com/yidapa/salam/docs/logo/salam-logo.jpg  "Sample inline image")
+
 
 A sample project that exists as an aid to the [Python Packaging User
 Guide][packaging guide]'s [Tutorial on Packaging and Distributing
