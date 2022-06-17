@@ -1,7 +1,6 @@
 # A Python tool for High-Throughput Virtual Screening of organic molecules driven by structural mutation and machine learning.
 
-![salam Logo](https://github.com/yidapa/salam/docs/logo/salam-logo.jpg  "Sample inline image")
-
+![salam Logo](https://github.com/yidapa/salam/blob/master/docs/logo/salam-logo.jpg "Sample inline image")
 
 A sample project that exists as an aid to the [Python Packaging User
 Guide][packaging guide]'s [Tutorial on Packaging and Distributing
