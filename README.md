@@ -1,9 +1,7 @@
 <div align="left">
-  <img src="https://github.com/yidapa/salam/blob/master/docs/logo/salam-logo.jpg" height="80px"/>
+  <img src="https://github.com/yidapa/salam/blob/master/docs/logo/salam-logo.jpg" height="160px"/>
 </div>
 
-
-![salam Logo](https://github.com/yidapa/salam/blob/master/docs/logo/salam-logo.jpg "Sample inline image")
 
 # A Python tool for High-Throughput Virtual Screening of organic molecules driven by structural mutation and machine learning.
 
@@ -63,9 +61,8 @@ SALAM is currently maintained by C. J. Tu. Anyone is free to join and contribute
 
 If you have used SALAM in the course of your research, we ask that you cite it.
 
-There is still no official SALAM publication, 
+There is still no official SALAM publication, the recommended citation is:  
 
-the recommended citation is:  
 SALAM: a HTVS tool for organic materials. https://github.com/yidapa/salam
 
 
