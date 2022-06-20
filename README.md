@@ -1,39 +1,74 @@
-# A Python tool for High-Throughput Virtual Screening of organic molecules driven by structural mutation and machine learning.
+<div align="left">
+  <img src="https://github.com/yidapa/salam/blob/master/docs/logo/salam-logo.jpg" height="80px"/>
+</div>
+
 
 ![salam Logo](https://github.com/yidapa/salam/blob/master/docs/logo/salam-logo.jpg "Sample inline image")
 
-A sample project that exists as an aid to the [Python Packaging User
-Guide][packaging guide]'s [Tutorial on Packaging and Distributing
-Projects][distribution tutorial].
+# A Python tool for High-Throughput Virtual Screening of organic molecules driven by structural mutation and machine learning.
 
-This project does not aim to cover best practices for Python project
-development as a whole. For example, it does not provide guidance or tool
-recommendations for version control, documentation, or testing.
+[!PyPI version](https://pypi.org/project/salam/)
+[!Documentation status](https://salam.readthedocs.io/en/latest/)
 
+[Documentation](https://salam.readthedocs.io/en/latest/) | [Colab Tutorial](https://github.com/yidapa/salam/blob/master/docs/tutorials) |
+
+
+### Table of contents:
+
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Getting Started](#getting-started)
+- [About Us](#about-us)
+- [Citing SALAM](#citing-salam)
+
+## Requirements
+
+SALAM currently supports Python 3.7 and later versions, and requires these packages on any condition.
+
+- [joblib](https://pypi.python.org/pypi/joblib)
+- [NumPy](https://numpy.org/)
+- [pandas](http://pandas.pydata.org/)
+- [scikit-learn](https://scikit-learn.org/stable/)
+- [SciPy](https://www.scipy.org/)
+- [rdkit](https://www.rdkit.org/)
+- [DeepChem](https://deepchem.io/)
+  
 [The source for this project is available here][src].
 
-Most of the configuration for a Python project is done in the `setup.py` file,
-an example of which is included in this project. You should edit this file
-accordingly to adapt this sample project to your needs.
 
-----
+## Installation
 
-This is the README file for the project.
+SALAM can be installed using pip as
 
-The file should use UTF-8 encoding and can be written using
-[reStructuredText][rst] or [markdown][md use] with the appropriate [key set][md
-use]. It will be used to generate the project webpage on PyPI and will be
-displayed as the project homepage on common code-hosting services, and should be
-written for that purpose.
+```bash
+pip install salam
+```
 
-Typical contents for this file would include an overview of the project, basic
-usage examples, etc. Generally, including the project changelog in here is not a
-good idea, although a simple “What's New” section for the most recent version
-may be appropriate.
 
-[packaging guide]: https://packaging.python.org
-[distribution tutorial]: https://packaging.python.org/tutorials/packaging-projects/
+## Getting Started
+
+The SALAM project maintains a collection of [tutorials](https://github.com/yidapa/salam/blob/master/docs/tutorials).
+
+Typical usage is: 
+```bash
+python  salam  salam_paras.inp  &>  salam.logfile  &
+```
+
+
+## About Us
+
+SALAM is currently maintained by C. J. Tu. Anyone is free to join and contribute!
+
+## Citing SALAM
+
+If you have used SALAM in the course of your research, we ask that you cite it.
+
+There is still no official SALAM publication, 
+
+the recommended citation is:  
+SALAM: a HTVS tool for organic materials. https://github.com/yidapa/salam
+
+
+
+
 [src]: https://github.com/yidapa/salam
-[rst]: http://docutils.sourceforge.net/rst.html
-[md]: https://tools.ietf.org/html/rfc7764#section-3.5 "CommonMark variant"
-[md use]: https://packaging.python.org/specifications/core-metadata/#description-content-type-optional
