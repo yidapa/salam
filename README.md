@@ -3,7 +3,7 @@
 </div>
 
 
-# A Python tool for High-Throughput Virtual Screening of organic molecules driven by structural mutation and machine learning.
+# A Python tool for High-Throughput Virtual Screening of organic molecules driven by structural crossover, mutation and machine learning.
 
 [!PyPI version](https://pypi.org/project/salam/)
 [!Documentation status](https://salam.readthedocs.io/en/latest/)
@@ -49,7 +49,7 @@ The SALAM project maintains a collection of [tutorials](https://github.com/yidap
 
 Typical usage is: 
 ```bash
-python  salam  salam_paras.inp  &>  salam.logfile  &
+python  salam.py  salam_paras.inp  &>  salam.logfile  &
 ```
 
 
@@ -63,7 +63,7 @@ If you have used SALAM in the course of your research, we ask that you cite it.
 
 There is still no official SALAM publication, the recommended citation is:  
 
-SALAM: a HTVS tool for organic materials. https://github.com/yidapa/salam
+SALAM: an HTVS tool for organic materials. https://github.com/yidapa/salam
 
 
 
