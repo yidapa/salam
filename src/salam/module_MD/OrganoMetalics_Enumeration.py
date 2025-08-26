@@ -60,17 +60,17 @@ from rdkit import Chem
 from rdkit.Chem import Draw
 from rdkit.Chem import AllChem
 from rdkit import RDLogger
-from module_MD.D_Pi_A_Enumeration import delete_repeated_smiles_of_mols
+from salam.module_MD.D_Pi_A_Enumeration import delete_repeated_smiles_of_mols
 from tqdm import tqdm
 from joblib import Parallel, delayed
 import time
 import subprocess
-#from module_MD.D_Pi_A_Enumeration import D_A_Enumeration_new
-from module_MD.D_Pi_A_Enumeration import D_A_Enumeration_new_FullSubstitute
-from module_MD.D_Pi_A_Enumeration import replace_dummy_by_Po_label
-from module_MD.D_Pi_A_Enumeration import find_label_atom_idxs
-from module_MD.D_Pi_A_Enumeration import find_label_atom_idx
-from module_MD.D_Pi_A_Enumeration import delete_label_atoms_new
+#from salam.module_MD.D_Pi_A_Enumeration import D_A_Enumeration_new
+from salam.module_MD.D_Pi_A_Enumeration import D_A_Enumeration_new_FullSubstitute
+from salam.module_MD.D_Pi_A_Enumeration import replace_dummy_by_Po_label
+from salam.module_MD.D_Pi_A_Enumeration import find_label_atom_idxs
+from salam.module_MD.D_Pi_A_Enumeration import find_label_atom_idx
+from salam.module_MD.D_Pi_A_Enumeration import delete_label_atoms_new
 #import numpy as np
 import sys 
 

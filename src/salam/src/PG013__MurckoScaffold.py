@@ -22,8 +22,8 @@ from rdkit import Chem
 # from rdkit.Chem import AllChem
 # from rdkit.Chem import Draw
 from rdkit.Chem.Scaffolds import MurckoScaffold
-from module_MD.D_Pi_A_Enumeration import draw_mols
-from module_MD.D_Pi_A_Enumeration import delete_repeated_smiles_of_mols
+from salam.module_MD.D_Pi_A_Enumeration import draw_mols
+from salam.module_MD.D_Pi_A_Enumeration import delete_repeated_smiles_of_mols
 
 
 import argparse

@@ -68,7 +68,7 @@ RDLogger.DisableLog('rdApp.*')
 
 
 #-----------------------------------------------------------------------------
-def delete_repeated_smiles_of_mols(mols):
+def delete_repeated_smiles_of_mols(mols,is_sanitize=True):
     '''
     delete the repeated smiles within a list of molecules.
     
@@ -85,8 +85,29 @@ def delete_repeated_smiles_of_mols(mols):
     '''
     mols_smis = [Chem.MolToSmiles(mol) for mol in  mols]
     mols_smis_list = list( set(mols_smis) )
-    mols_rev = [Chem.MolFromSmiles(smi) for smi in  mols_smis_list]    
+    mols_rev = [Chem.MolFromSmiles(smi,sanitize=is_sanitize) for smi in  mols_smis_list]    
     return mols_rev
+
+
+def delete_repeated_smiles_of_smis(smis,is_sanitize=True):
+    '''
+    delete the repeated smiles within a list of smiles of molecules.
+    
+    Parameters
+    ----------
+    smis : list of smiles of molecules
+        DESCRIPTION.
+
+    Returns
+    -------
+    smis_rev : list of smiles of molecules
+        DESCRIPTION.
+
+    '''
+    new_smis = [Chem.MolToSmiles( Chem.MolFromSmiles(smi, sanitize=is_sanitize) ) for smi in  smis]
+    smis_rev = list( set(new_smis) )
+    
+    return smis_rev
 
 
 def find_label_atom_idx(ligand, atom_symbol='*'):
@@ -109,7 +130,29 @@ def find_label_atom_idxs(ligand, atom_symbol='*'):
 
 
 
-def delete_label_atom(mol, delete_atom_symbol='Po'):
+# def delete_label_atom(mol, delete_atom_symbol='Po'):
+#     rwmol = Chem.RWMol(mol)
+#     rwmol.UpdatePropertyCache(strict=False)
+    
+#     Po_idx = find_label_atom_idx(rwmol, atom_symbol=delete_atom_symbol)
+#     #print("Po_idx = ", Po_idx)
+    
+#     Po_atom = rwmol.GetAtomWithIdx(Po_idx)
+
+#     nbrs = Po_atom.GetNeighbors()
+#     #print("Po_atom.GetNeighbors() are: ", Po_atom.GetNeighbors() )
+#     if len(nbrs) >= 2:
+#         left_atom_idx = nbrs[0].GetIdx()
+#         right_atom_idx = nbrs[1].GetIdx()
+#         rwmol.RemoveBond(left_atom_idx, Po_idx)
+#         rwmol.RemoveBond(right_atom_idx, Po_idx)
+#         rwmol.AddBond(left_atom_idx, right_atom_idx, Chem.BondType.SINGLE)
+#         rwmol.RemoveAtom(Po_idx)
+        
+#     return Chem.Mol(rwmol)
+
+
+def delete_label_atom(mol, delete_atom_symbol='Po', bondtype=Chem.BondType.SINGLE):
     rwmol = Chem.RWMol(mol)
     rwmol.UpdatePropertyCache(strict=False)
     
@@ -125,8 +168,14 @@ def delete_label_atom(mol, delete_atom_symbol='Po'):
         right_atom_idx = nbrs[1].GetIdx()
         rwmol.RemoveBond(left_atom_idx, Po_idx)
         rwmol.RemoveBond(right_atom_idx, Po_idx)
-        rwmol.AddBond(left_atom_idx, right_atom_idx, Chem.BondType.SINGLE)
+        rwmol.AddBond(left_atom_idx, right_atom_idx, bondtype)
         rwmol.RemoveAtom(Po_idx)
+    elif len(nbrs) == 1:
+        left_atom_idx = nbrs[0].GetIdx()
+        rwmol.RemoveBond(left_atom_idx, Po_idx)
+        rwmol.RemoveAtom(Po_idx)
+    else:
+        print("###ERROR! The labelled atom has no neighbors exist, please check.")
         
     return Chem.Mol(rwmol)
 
@@ -223,6 +272,21 @@ def replace_dummy_by_Po_label(mol, original_label_symbol='*', final_label_symbol
     Chem.SanitizeMol(mol)
 
 
+def replace_dummy_by_Po_label_v1(mol, original_label_symbol='*', final_label_symbol='Po', reverse=False):
+    mol1 = Chem.MolFromSmiles( Chem.MolToSmiles(mol) ) 
+    original_label_idx = find_label_atom_idx(mol1, atom_symbol=original_label_symbol)
+    
+    if reverse == False:    
+        replace_label_AtomicNum = 84
+    else:
+        replace_label_AtomicNum = 0
+    
+    mol1.GetAtomWithIdx(original_label_idx).SetAtomicNum(replace_label_AtomicNum)
+    # Chem.SanitizeMol(mol1)    
+    
+    return mol1
+
+
 def draw_mols(mols, nb_mols=9, file_name='./foo-gridimage-mols.png', molsPerRow=4, size=(400, 400), legends=None):
     # Compute2DCoords for dipection
     for mol in mols[:nb_mols]:
@@ -236,6 +300,9 @@ def draw_mols(mols, nb_mols=9, file_name='./foo-gridimage-mols.png', molsPerRow=
                                legends=legends,
                                ) 
     img.save(file_name)
+    
+    # print(type(img))
+    # print(dir(img))
     
     img.close()
 
@@ -529,7 +596,7 @@ def D_Pi_A_Enumeration_new(ligandA_smis, pi_bridge_smis, ligandB_smis, verbse=Fa
 
     Returns
     -------
-    DPiA_mols : list of rdkit mol. 
+    DPiA_mols : list of rdkit mol. D_A_Enumeration_new
         DESCRIPTION.
 
     '''
@@ -731,6 +798,266 @@ def D3_A_Enumeration_new(ligandA_smis, ligandB_smis, verbse=False):
 
 
 
+def D_Pi_A_Pi_D_Enumeration_new_symmetric(ligandA_smis, pi_bridge_smis, ligandB_smis, verbse=False):
+    '''
+    This function can return the combined chemical compound library on condition that 
+    Donors, Pi_bridges and Acceptors are given via args ligandA_smis, pi_bridge_smis and ligandB_smis, 
+    and the substitution position of 
+    Donor is labeled by [*], 
+    Pi_bridge by [Po]--pi-bridge--[*],
+    meanwhile Acceptor by [Po]--acceptor--[*].
+
+    Parameters
+    ----------
+    ligandA_smis : list of smiles.
+        DESCRIPTION.
+    pi_bridge_smis : list of smiles.
+        DESCRIPTION.
+    ligandB_smis : list of smiles.
+        DESCRIPTION.
+    verbse : logical, optional
+        DESCRIPTION. The default is False.
+
+    Returns
+    -------
+    DPiAPiD_mols : list of rdkit mol. 
+        DESCRIPTION.
+
+    '''
+    ligandAs = [Chem.MolFromSmiles(smi) for smi in ligandA_smis]
+    pi_bridges = [Chem.MolFromSmiles(smi) for smi in pi_bridge_smis]
+    ligandBs = [Chem.MolFromSmiles(smi) for smi in ligandB_smis]
+    
+    #---- create ligandAs_pi_bridges provided ligandAs ('*') and pi_bridges ('Po'---'*'), 
+    #-----ligandAs_pi_bridges also have label atom [*] for further substitution
+    ligandAs_Po_pi_bridges = []
+    ligandAs_pi_bridges = []
+    ligandAs_pi_bridges_Po_ligandBs = []
+    ligandAs_pi_bridges_ligandBs = []
+    ligandAs_pi_bridges_ligandBs_Po_pi_bridges = []
+    ligandAs_pi_bridges_ligandBs_pi_bridges = []
+    ligandAs_pi_bridges_ligandBs_pi_bridges_Po_ligandAs = [] 
+    ligandAs_pi_bridges_ligandBs_pi_bridges_ligandAs = []
+    
+    
+    for ligandA in ligandAs:
+        for pi_bridge in pi_bridges:
+            for ligandB in ligandBs:
+                Po_idx = find_label_atom_idx(pi_bridge, atom_symbol='Po')
+                
+                ligandA_Po_pi_bridge = Chem.ReplaceSubstructs(ligandA, 
+                                                            Chem.MolFromSmarts('[#0]'), 
+                                                            pi_bridge, 
+                                                            replacementConnectionPoint=Po_idx )
+                ligandAs_Po_pi_bridges.append(ligandA_Po_pi_bridge[0])
+                
+                ligandA_pi_bridge = delete_label_atom(ligandA_Po_pi_bridge[0], 
+                                                      delete_atom_symbol='Po')
+                
+                ligandAs_pi_bridges.append(ligandA_pi_bridge)
+                
+                # print("DPi", Chem.MolToSmiles(ligandA_pi_bridge) )
+                
+
+                Po_idx1 = find_label_atom_idx(ligandB, atom_symbol='Po')
+                
+                ligandA_pi_bridge_Po_ligandB = Chem.ReplaceSubstructs(ligandA_pi_bridge, 
+                                                                        Chem.MolFromSmarts('[#0]'), 
+                                                                        ligandB, 
+                                                                        replacementConnectionPoint=Po_idx1 )
+                ligandAs_pi_bridges_Po_ligandBs.append(ligandA_pi_bridge_Po_ligandB[0])
+                
+                ligandA_pi_bridge_ligandB = delete_label_atom(ligandA_pi_bridge_Po_ligandB[0], 
+                                                              delete_atom_symbol='Po')
+            
+                ligandAs_pi_bridges_ligandBs.append(ligandA_pi_bridge_ligandB)
+                
+                # print("DPiA", Chem.MolToSmiles(ligandA_pi_bridge_ligandB) )
+                
+                #---------------------------------------------------------------
+                # Po_idx2 = find_label_atom_idx(pi_bridge, atom_symbol='Po')
+                
+                ligandA_pi_bridge_ligandB_Po_pi_bridge = Chem.ReplaceSubstructs(ligandA_pi_bridge_ligandB, 
+                                                                                Chem.MolFromSmarts('[#0]'), 
+                                                                                pi_bridge, 
+                                                                                replacementConnectionPoint=Po_idx )
+                ligandAs_pi_bridges_ligandBs_Po_pi_bridges.append(ligandA_pi_bridge_ligandB_Po_pi_bridge[0])
+                
+                ligandA_pi_bridge_ligandB_pi_bridge = delete_label_atom(ligandA_pi_bridge_ligandB_Po_pi_bridge[0], 
+                                                                        delete_atom_symbol='Po')
+                
+                ligandAs_pi_bridges_ligandBs_pi_bridges.append(ligandA_pi_bridge_ligandB_pi_bridge)
+
+                # print("DPiAPi", Chem.MolToSmiles(ligandA_pi_bridge_ligandB_pi_bridge) )                                
+    
+
+                ligandA_rev = replace_dummy_by_Po_label_v1(ligandA, 
+                                                           original_label_symbol='*', 
+                                                           final_label_symbol='Po', 
+                                                           reverse=False)
+                
+                Po_idx3 = find_label_atom_idx(ligandA_rev, atom_symbol='Po')
+                
+                ligandA_pi_bridge_ligandB_pi_bridge_Po_ligandA = Chem.ReplaceSubstructs(ligandA_pi_bridge_ligandB_pi_bridge, 
+                                                                                        Chem.MolFromSmarts('[#0]'), 
+                                                                                        ligandA_rev, 
+                                                                                        replacementConnectionPoint=Po_idx3 )
+                ligandAs_pi_bridges_ligandBs_pi_bridges_Po_ligandAs.append(ligandA_pi_bridge_ligandB_pi_bridge_Po_ligandA[0])
+                
+                ligandA_pi_bridge_ligandB_pi_bridge_ligandA = delete_label_atom(ligandA_pi_bridge_ligandB_pi_bridge_Po_ligandA[0], 
+                                                                                delete_atom_symbol='Po')
+                
+                ligandAs_pi_bridges_ligandBs_pi_bridges_ligandAs.append(ligandA_pi_bridge_ligandB_pi_bridge_ligandA)
+                
+                print("DPiAPiD", Chem.MolToSmiles(ligandA_pi_bridge_ligandB_pi_bridge_ligandA) )
+    
+    
+    DPiAPiD_mols = ligandAs_pi_bridges_ligandBs_pi_bridges_ligandAs
+    
+    
+    #----- Sanitize mols ------
+    for mol, i in zip(DPiAPiD_mols, range(len(DPiAPiD_mols))):
+        try:
+            Chem.SanitizeMol(mol)
+        except: 
+            print("sanitizemol failed: ")
+            print(Chem.MolToSmiles(mol))
+    
+    if verbse:
+        print("# info on D_Pi_A_Pi_D_Enumeration_new_symmetric( )")
+        print("\n# ligandAs :")
+        for mol in ligandAs:
+            print(Chem.MolToSmiles(mol))      
+            
+        print("\n# pi_bridges :")
+        for mol in pi_bridges:
+            print(Chem.MolToSmiles(mol))
+        
+        print("\n# ligandBs :")
+        for mol in ligandBs:
+            print(Chem.MolToSmiles(mol))
+                 
+        print("\n#The product D_Pi_A_Pi_D molecules are: ")
+        print("-"*80)
+        for mol in DPiAPiD_mols:
+            print(Chem.MolToSmiles(mol)) 
+
+        print("-"*80)
+        print("# The lens of ligandAs, ligandBs, pi_bridges, DPiAPiD_mols are:")  
+        print(len(ligandAs), len(ligandBs), len(pi_bridges), len(DPiAPiD_mols) )  
+
+    return delete_repeated_smiles_of_mols(DPiAPiD_mols) 
+
+
+
+def D_A_D_Enumeration_new_symmetric(ligandA_smis, ligandB_smis, verbse=False):
+    '''
+    This function can return the combined chemical compound library on condition that 
+    Donors and Acceptors are given via args ligandA_smis and ligandB_smis, 
+    and the substitution position of 
+    Donor is labeled by [*], 
+    meanwhile Acceptor by [Po]--acceptor--[*].
+
+    Parameters
+    ----------
+    ligandA_smis : list of smiles.
+        DESCRIPTION.
+    ligandB_smis : list of smiles.
+        DESCRIPTION.
+    verbse : logical, optional
+        DESCRIPTION. The default is False.
+
+    Returns
+    -------
+    DAD_mols : list of rdkit mol. 
+        DESCRIPTION.
+
+    '''
+    ligandAs = [Chem.MolFromSmiles(smi) for smi in ligandA_smis]
+    ligandBs = [Chem.MolFromSmiles(smi) for smi in ligandB_smis]
+    
+    #---- create ligandAs_ligandBs provided ligandAs ('*') and ligandAs ('Po'---'*'), 
+    #-----ligandAs_ligandBs also have label atom [*] for further substitution
+
+    ligandAs_Po_ligandBs = []
+    ligandAs_ligandBs = []
+    ligandAs_ligandBs_Po_ligandAs = [] 
+    ligandAs_ligandBs_ligandAs = []
+    
+    
+    for ligandA in ligandAs:
+            for ligandB in ligandBs:
+                Po_idx = find_label_atom_idx(ligandB, atom_symbol='Po')
+                
+                ligandA_Po_ligandB = Chem.ReplaceSubstructs(ligandA, 
+                                                            Chem.MolFromSmarts('[#0]'), 
+                                                            ligandB, 
+                                                            replacementConnectionPoint=Po_idx )
+                ligandAs_Po_ligandBs.append(ligandA_Po_ligandB[0])
+                
+                ligandA_ligandB = delete_label_atom(ligandA_Po_ligandB[0], 
+                                                      delete_atom_symbol='Po')
+                
+                ligandAs_ligandBs.append(ligandA_ligandB)
+                
+                # print("DA", Chem.MolToSmiles(ligandA_ligandB) )
+                
+                #---------------------------------------------------------------                             
+                ligandA_rev = replace_dummy_by_Po_label_v1(ligandA, 
+                                                           original_label_symbol='*', 
+                                                           final_label_symbol='Po', 
+                                                           reverse=False)
+                
+                Po_idx3 = find_label_atom_idx(ligandA_rev, atom_symbol='Po')
+                
+                ligandA_ligandB_Po_ligandA = Chem.ReplaceSubstructs(ligandA_ligandB, 
+                                                                    Chem.MolFromSmarts('[#0]'), 
+                                                                    ligandA_rev, 
+                                                                    replacementConnectionPoint=Po_idx3 )
+                ligandAs_ligandBs_Po_ligandAs.append(ligandA_ligandB_Po_ligandA[0])
+                
+                ligandA_ligandB_ligandA = delete_label_atom(ligandA_ligandB_Po_ligandA[0], 
+                                                            delete_atom_symbol='Po')
+                
+                ligandAs_ligandBs_ligandAs.append(ligandA_ligandB_ligandA)
+                
+                print("DAD", Chem.MolToSmiles(ligandA_ligandB_ligandA) )
+    
+    
+    DAD_mols = ligandAs_ligandBs_ligandAs
+    
+    
+    #----- Sanitize mols ------
+    for mol, i in zip(DAD_mols, range(len(DAD_mols))):
+        try:
+            Chem.SanitizeMol(mol)
+        except: 
+            print("sanitizemol failed: ")
+            print(Chem.MolToSmiles(mol))
+    
+    if verbse:
+        print("# info on D_A_D_Enumeration_new_symmetric( )")
+        print("\n# ligandAs :")
+        for mol in ligandAs:
+            print(Chem.MolToSmiles(mol))      
+        
+        print("\n# ligandBs :")
+        for mol in ligandBs:
+            print(Chem.MolToSmiles(mol))
+                 
+        print("\n#The product D_A_D molecules are: ")
+        print("-"*80)
+        for mol in DAD_mols:
+            print(Chem.MolToSmiles(mol)) 
+
+        print("-"*80)
+        print("# The lens of ligandAs, ligandBs, DAD_mols are:")  
+        print(len(ligandAs), len(ligandBs), len(DAD_mols) )  
+
+    return delete_repeated_smiles_of_mols(DAD_mols) 
+
+
+
 #-----------------------------------------------------------------------------
 def try_embedmolecule(mol):
     mol1 = Chem.AddHs(mol)
@@ -777,6 +1104,9 @@ def write_mols_paralell(mols, cpd_names, outfile_path='./project/G0000/separate_
     
     start = time.time()
     
+    mkdir_separate_mols = 'mkdir   ' + outfile_path + '  2>/dev/null  '
+    (status, output) = subprocess.getstatusoutput( mkdir_separate_mols )
+    
     rm_GXXXX_separate_mols_sdf = 'rm -f   '  +  outfile_path + 'cpd-*.sdf  '
     (status0, output0) = subprocess.getstatusoutput( rm_GXXXX_separate_mols_sdf )
     
@@ -789,6 +1119,49 @@ def write_mols_paralell(mols, cpd_names, outfile_path='./project/G0000/separate_
     print("write_mol_to_sdf run in paralell.")
     print('{:.4f} s'.format(end-start))
 
+
+#-----------------------------------------------------------------------------
+def write_mol_to_sdf_notEmbed(mol, 
+                              cpd_name, 
+                              outfile_path='./project/G0000/separate_mols/'):
+    
+    outname=  outfile_path + '%s.sdf'%(cpd_name)
+    #print(outname)
+    one_w = Chem.SDWriter(outname)
+    m_temp = mol
+    
+    m_temp.SetProp("_Name", cpd_name)
+    
+    # if m_temp.GetProp("_Name") is None: 
+    #     m_temp.SetProp("_Name", cpd_name)
+    # else:
+    #     print(m_temp.GetProp("_Name"))
+    
+    one_w.write(m_temp)
+    
+    with open(outname, 'a+') as fh:
+        fh.write("$$$$" +"\n")
+
+
+def write_mols_paralell_notEmbed(mols, 
+                                 cpd_names, 
+                                 outfile_path='./project/G0000/separate_mols/'):
+    #-------  paralell write mols-----------------------------------------------------------
+    print("The outfile_path is : %s" % outfile_path )
+    
+    start = time.time()
+    
+    rm_GXXXX_separate_mols_sdf = 'rm -f   '  +  outfile_path + '*cpd*.sdf  '
+    (status0, output0) = subprocess.getstatusoutput( rm_GXXXX_separate_mols_sdf )
+    
+    Parallel(n_jobs=-1)(delayed(write_mol_to_sdf_notEmbed)(mol, cpd_name, outfile_path) \
+                        for mol, cpd_name in zip( tqdm(mols), cpd_names) )
+    
+    end = time.time()
+    
+    print('-'*60)
+    print("write_mol_to_sdf run in paralell without embedmolecule.")
+    print('{:.4f} s'.format(end-start))
 
 
 
@@ -924,6 +1297,44 @@ if __name__ == '__main__':
 #               size=(400, 400))
 # =============================================================================
 
+    # #---- test on D_Pi_A_Pi_D_Enumeration_new_symmetric()
+    # ligandA_smis = ['C1=CC=CC2=C1[N](C3=C2C=CC=C3)[*]', \
+    #                 'C1=CC(=CC2=C1[N](C3=C2C=C(C=C3)C)[*])C', \
+    #                 'C1=CC(=CC2=C1[N](C3=C2C=C(C=C3)C(C)(C)C)[*])C(C)(C)C'
+    #                 ]
+        
+    # pi_bridge_smis = ['C1=CC(=CC=C1[Po])[*]', \
+    #                   'C1=C(C=CC3=C1C(C2=CC(=CC=C2C3(C)C)[*])(C)C)[Po]']
+        
+    # ligandB_smis = ['C1=CC(=CC=C1[S](C2=CC=C(C=C2)[Po])(=O)=O)[*]', \
+    #                 'C1=CC(=CC=C1C(C2=CC=C(C=C2)[Po])=O)[*]', \
+    #                 'C1=CC(=CC=C1C(C2=CC=C(C=C2)[Po])=O)C(C3=CC=C(C=C3)[*])=O'
+    #                 ] 
+    
+    # DPiAPiD_mols = D_Pi_A_Pi_D_Enumeration_new_symmetric(ligandA_smis, 
+    #                                                      pi_bridge_smis, 
+    #                                                      ligandB_smis, 
+    #                                                      verbse=True) 
+    
+    # draw_mols(DPiAPiD_mols, len(DPiAPiD_mols), './foo001--DPiAPiD-mols-new.png', molsPerRow=3, size=(800, 800))
+
+
+    # #---- test on D_A_D_Enumeration_new_symmetric()
+    # ligandA_smis = ['C1=CC=CC2=C1[N](C3=C2C=CC=C3)[*]', \
+    #                 'C1=CC(=CC2=C1[N](C3=C2C=C(C=C3)C)[*])C', \
+    #                 'C1=CC(=CC2=C1[N](C3=C2C=C(C=C3)C(C)(C)C)[*])C(C)(C)C'
+    #                 ]
+        
+    # ligandB_smis = ['C1=CC(=CC=C1[S](C2=CC=C(C=C2)[Po])(=O)=O)[*]', \
+    #                 'C1=CC(=CC=C1C(C2=CC=C(C=C2)[Po])=O)[*]', \
+    #                 'C1=CC(=CC=C1C(C2=CC=C(C=C2)[Po])=O)C(C3=CC=C(C=C3)[*])=O'
+    #                 ] 
+    
+    # DAD_mols = D_A_D_Enumeration_new_symmetric(ligandA_smis, 
+    #                                            ligandB_smis, 
+    #                                            verbse=True) 
+    
+    # draw_mols(DAD_mols, len(DAD_mols), './foo001--DAD-mols-new-symmetric.png', molsPerRow=3, size=(800, 800))
 
     
     print("\nFinished!")

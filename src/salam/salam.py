@@ -23,16 +23,16 @@ import time
 import subprocess
 import datetime
 
-from module_MD.Metrics import percentage_lt_criticval
-from module_MD.Metrics import accumulate_optmols 
-from module_MD.Metrics import accumulate_optmols_S1En
-from module_MD.Metrics import accumulate_optmols_intersection
-# from module_MD.Metrics import get_allfrags_via_bricsdecompose
-from module_MD.Metrics import get_num_replaceable_aromatic_CHs
-from module_MD.Metrics import get_paras_dic
-from module_MD.Metrics import convert_str_to_list
-from module_MD.Metrics import sort_mols_by_SAScores
-from module_MD.Metrics import plot_muation_diagram
+from salam.module_MD.Metrics import percentage_lt_criticval
+from salam.module_MD.Metrics import accumulate_optmols 
+from salam.module_MD.Metrics import accumulate_optmols_S1En
+from salam.module_MD.Metrics import accumulate_optmols_intersection
+# from salam.module_MD.Metrics import get_allfrags_via_bricsdecompose
+from salam.module_MD.Metrics import get_num_replaceable_aromatic_CHs
+from salam.module_MD.Metrics import get_paras_dic
+from salam.module_MD.Metrics import convert_str_to_list
+from salam.module_MD.Metrics import sort_mols_by_SAScores
+from salam.module_MD.Metrics import plot_muation_diagram
 
 
 import pandas as pd
@@ -797,315 +797,316 @@ def run_accumulate_optmols_intersection( ):
 #------------------------------------------------------------------------------
 #------- main begin here ------------------------------------------------------
 #------------------------------------------------------------------------------
+if __name__ == '__main__':
 
-start_t0 = datetime.datetime.now()
-
-print("\n### Begin of program: SALAM.\n" )
-
-call_echo_begin_program_salam_to_salam_log = "echo -e  '### Begin of program: SALAM.\n'      1>    "    +   SALAM_LOG
-retcode = os.system( call_echo_begin_program_salam_to_salam_log )
-print("retcode = ", retcode)
-
-abundances = []
-num_replaceable_aromaticCHs = []
-num_acc_optmols = []
-num_acc_optmols_S1En = []
-num_acc_optmols_INTERSECTIONs = []
-
-
-#-------loop over PG002 ~ PG011 ---------------------------------------------------------
-print("### loop over PG002 ~ PG015. ")
-print("Initial MUTATION_GENERATION = %4d\n"% int( PARAS_DIC['MUTATION_GENERATION'] ) )
-print("MUTATION_GENERATION_LIMIT = %4d\n"% int(  PARAS_DIC['MUTATION_GENERATION_LIMIT'] ) )
-
-MUTATION_GENERATION = int( PARAS_DIC['MUTATION_GENERATION'] )
-
-while ( MUTATION_GENERATION  < int( PARAS_DIC['MUTATION_GENERATION_LIMIT'] )):
-    print("### --------------------- MUTATION_GENERATION = %4d -------------------------\n"%MUTATION_GENERATION )
-    retcode = os.system( "echo  '### --------------------- MUTATION_GENERATION =  %4d"%MUTATION_GENERATION  +  "   '      1>>    "    +   SALAM_LOG )
+    start_t0 = datetime.datetime.now()
+    
+    print("\n### Begin of program: SALAM.\n" )
+    
+    call_echo_begin_program_salam_to_salam_log = "echo -e  '### Begin of program: SALAM.\n'      1>    "    +   SALAM_LOG
+    retcode = os.system( call_echo_begin_program_salam_to_salam_log )
     print("retcode = ", retcode)
     
-    GXXXX = 'G%04d'%MUTATION_GENERATION
-    PXXXX = 'P%04d'%MUTATION_GENERATION
-    OXXXX = 'O%04d'%MUTATION_GENERATION
-    GXXXXPLUSONE = 'G%04d'%(MUTATION_GENERATION +1)
-
-    # GXXXX_sdf_path = './project/'  +  GXXXX    +  '/'  + GXXXX   +  '.sdf'
-    # all_frags = get_allfrags_via_bricsdecompose(filename=GXXXX_sdf_path)
-    # # for frag in all_frags:
-    # #     print( frag )
-
-    GXXXX_sdf_path = './project/'  +  GXXXX    +  '/'  + GXXXX   +  '.sdf' 
-    num_replaceable_aromaticCH = get_num_replaceable_aromatic_CHs(filename=GXXXX_sdf_path,
-                                                                 patt_str='c[H]'
-                                                                 )
-    num_replaceable_aromaticCHs.append( num_replaceable_aromaticCH )
-
-
-    if (MUTATION_GENERATION < RESTART_GENERATION):
-        print("\nSkip all PGs, since MUTATION_GENERATION < RESTART_GENERATION.\n")
+    abundances = []
+    num_replaceable_aromaticCHs = []
+    num_acc_optmols = []
+    num_acc_optmols_S1En = []
+    num_acc_optmols_INTERSECTIONs = []
+    
+    
+    #-------loop over PG002 ~ PG011 ---------------------------------------------------------
+    print("### loop over PG002 ~ PG015. ")
+    print("Initial MUTATION_GENERATION = %4d\n"% int( PARAS_DIC['MUTATION_GENERATION'] ) )
+    print("MUTATION_GENERATION_LIMIT = %4d\n"% int(  PARAS_DIC['MUTATION_GENERATION_LIMIT'] ) )
+    
+    MUTATION_GENERATION = int( PARAS_DIC['MUTATION_GENERATION'] )
+    
+    while ( MUTATION_GENERATION  < int( PARAS_DIC['MUTATION_GENERATION_LIMIT'] )):
+        print("### --------------------- MUTATION_GENERATION = %4d -------------------------\n"%MUTATION_GENERATION )
+        retcode = os.system( "echo  '### --------------------- MUTATION_GENERATION =  %4d"%MUTATION_GENERATION  +  "   '      1>>    "    +   SALAM_LOG )
+        print("retcode = ", retcode)
         
-        # run_PG002()                                      #  './PG002__MaxMinPicker.py'
-        # run_PG003()                                      #  './PG003__bat_sdf_to_com_gs.py'
-        # run_PG004()                                      #  './PG004__bat_qsub_jobs_opt.py'
-        
-        #time.sleep( SLEEP_SECONDS )                      #  sleep before opt_analysis 
-        # run_PG005(call_manner=1)                         #  './PG005__optimization_analysis.py'
-        # run_PG006()                                      #  './PG006__bat_g09log_to_tadfcom.py'
-        # run_PG007()                                      #  './PG007__bat_qsub_jobs_tadf.py'
-        
-        # time.sleep( SLEEP_SECONDS )                      #  sleep before prop_analysis 
-        
-        # run_PG008(call_manner=1)                        #  './PG008__property_analysis_completeness.py'
-        # run_PG09(call_manner=2)                        #  './PG009__property_analysis_summary.py'
-        # run_PG010(call_manner=2)                         #  './PG010__featurizers_train_evaluate.py'
-        
-        # run_PG011(call_manner=2)                         #  './PG011__predict_opt_molecules.py'
-        # time.sleep( SLEEP_SECONDS )         
-
-        # run_PG012(call_manner=2)                         #  './PG012__Generate_Gnew.py'
-        # time.sleep( SLEEP_SECONDS )                      #  sleep before evaluate_abundance
-        
-        # run_PG013(call_manner=2)                         #   './PG013__MurckoScaffold.py'
-        # time.sleep( SLEEP_SECONDS ) 
-        
-        # run_PG014(call_manner=2)                         #  './PG014__Energy_Sieve.py'
-        # time.sleep( SLEEP_SECONDS ) 
-        
-        # run_PG015(call_manner=2)                         #  './PG015__Map-mols-by-FPSimilarity.py'
-        # time.sleep( SLEEP_SECONDS )
-                              
-    elif (MUTATION_GENERATION == RESTART_GENERATION):
-        if (RESTART_MAXMINPICKER == True):
-            run_PG002()                                      #  './PG002__MaxMinPicker.py'
-        else:
-            print("(MUTATION_GENERATION == RESTART_GENERATION), & (RESTART_MAXMINPICKER == False), skip run_PG002()")
-        
-        run_PG003()                                      #  './PG003__bat_sdf_to_com_gs.py'
-        
-        if (RESTART_OPTJOB == True):
-            run_PG004()                                      #  './PG004__bat_qsub_jobs_opt.py'
-        else:
-            print("(MUTATION_GENERATION == RESTART_GENERATION), & (RESTART_OPTJOB == False), skip run_PG004()")
-        
-        time.sleep( SLEEP_SECONDS )                      #  sleep before opt_analysis 
-        run_PG005(call_manner=1)                         #  './PG005__optimization_analysis.py'
-
-        run_PG006()                                      #  './PG006__bat_g09log_to_tadfcom.py'
-        
-        if (RESTART_OPTJOB == True) or (RESTART_PROPJOB == True):
-            run_PG007()                                      #  './PG007__bat_qsub_jobs_tadf.py'
-        else:
-            print("(MUTATION_GENERATION == RESTART_GENERATION), & ( (RESTART_OPTJOB == False) & (RESTART_PROPJOB == False) ), skip run_PG007()" )
+        GXXXX = 'G%04d'%MUTATION_GENERATION
+        PXXXX = 'P%04d'%MUTATION_GENERATION
+        OXXXX = 'O%04d'%MUTATION_GENERATION
+        GXXXXPLUSONE = 'G%04d'%(MUTATION_GENERATION +1)
+    
+        # GXXXX_sdf_path = './project/'  +  GXXXX    +  '/'  + GXXXX   +  '.sdf'
+        # all_frags = get_allfrags_via_bricsdecompose(filename=GXXXX_sdf_path)
+        # # for frag in all_frags:
+        # #     print( frag )
+    
+        GXXXX_sdf_path = './project/'  +  GXXXX    +  '/'  + GXXXX   +  '.sdf' 
+        num_replaceable_aromaticCH = get_num_replaceable_aromatic_CHs(filename=GXXXX_sdf_path,
+                                                                     patt_str='c[H]'
+                                                                     )
+        num_replaceable_aromaticCHs.append( num_replaceable_aromaticCH )
+    
+    
+        if (MUTATION_GENERATION < RESTART_GENERATION):
+            print("\nSkip all PGs, since MUTATION_GENERATION < RESTART_GENERATION.\n")
             
-        time.sleep( SLEEP_SECONDS )                      #  sleep before prop_analysis 
-        
-        run_PG008(call_manner=1)                        #  './PG008__property_analysis_completeness.py'
-        run_PG009(call_manner=2)                        #  './PG009__property_analysis_summary.py'
-        run_PG010(call_manner=2)                         #  './PG010__featurizers_train_evaluate.py'
-        
-        run_PG011(call_manner=2)                         #  './PG011__predict_opt_molecules.py'
-        time.sleep( SLEEP_SECONDS )                      #  sleep before evaluate_abundance
-        
-        run_PG012(call_manner=2)                         #  './PG012__Generate_Gnew.py'
-        time.sleep( SLEEP_SECONDS )
-
-        run_PG013(call_manner=2)                         #   './PG013__MurckoScaffold.py'
-        time.sleep( SLEEP_SECONDS )                    
-        
-        run_PG014(call_manner=2)                         #  './PG014__Energy_Sieve.py'
-        time.sleep( SLEEP_SECONDS ) 
-
-        run_PG015(call_manner=2)                         #  './PG015__Map-mols-by-FPSimilarity.py'
-        time.sleep( SLEEP_SECONDS )
+            # run_PG002()                                      #  './PG002__MaxMinPicker.py'
+            # run_PG003()                                      #  './PG003__bat_sdf_to_com_gs.py'
+            # run_PG004()                                      #  './PG004__bat_qsub_jobs_opt.py'
+            
+            #time.sleep( SLEEP_SECONDS )                      #  sleep before opt_analysis 
+            # run_PG005(call_manner=1)                         #  './PG005__optimization_analysis.py'
+            # run_PG006()                                      #  './PG006__bat_g09log_to_tadfcom.py'
+            # run_PG007()                                      #  './PG007__bat_qsub_jobs_tadf.py'
+            
+            # time.sleep( SLEEP_SECONDS )                      #  sleep before prop_analysis 
+            
+            # run_PG008(call_manner=1)                        #  './PG008__property_analysis_completeness.py'
+            # run_PG09(call_manner=2)                        #  './PG009__property_analysis_summary.py'
+            # run_PG010(call_manner=2)                         #  './PG010__featurizers_train_evaluate.py'
+            
+            # run_PG011(call_manner=2)                         #  './PG011__predict_opt_molecules.py'
+            # time.sleep( SLEEP_SECONDS )         
     
+            # run_PG012(call_manner=2)                         #  './PG012__Generate_Gnew.py'
+            # time.sleep( SLEEP_SECONDS )                      #  sleep before evaluate_abundance
+            
+            # run_PG013(call_manner=2)                         #   './PG013__MurckoScaffold.py'
+            # time.sleep( SLEEP_SECONDS ) 
+            
+            # run_PG014(call_manner=2)                         #  './PG014__Energy_Sieve.py'
+            # time.sleep( SLEEP_SECONDS ) 
+            
+            # run_PG015(call_manner=2)                         #  './PG015__Map-mols-by-FPSimilarity.py'
+            # time.sleep( SLEEP_SECONDS )
+                                  
+        elif (MUTATION_GENERATION == RESTART_GENERATION):
+            if (RESTART_MAXMINPICKER == True):
+                run_PG002()                                      #  './PG002__MaxMinPicker.py'
+            else:
+                print("(MUTATION_GENERATION == RESTART_GENERATION), & (RESTART_MAXMINPICKER == False), skip run_PG002()")
+            
+            run_PG003()                                      #  './PG003__bat_sdf_to_com_gs.py'
+            
+            if (RESTART_OPTJOB == True):
+                run_PG004()                                      #  './PG004__bat_qsub_jobs_opt.py'
+            else:
+                print("(MUTATION_GENERATION == RESTART_GENERATION), & (RESTART_OPTJOB == False), skip run_PG004()")
+            
+            time.sleep( SLEEP_SECONDS )                      #  sleep before opt_analysis 
+            run_PG005(call_manner=1)                         #  './PG005__optimization_analysis.py'
+    
+            run_PG006()                                      #  './PG006__bat_g09log_to_tadfcom.py'
+            
+            if (RESTART_OPTJOB == True) or (RESTART_PROPJOB == True):
+                run_PG007()                                      #  './PG007__bat_qsub_jobs_tadf.py'
+            else:
+                print("(MUTATION_GENERATION == RESTART_GENERATION), & ( (RESTART_OPTJOB == False) & (RESTART_PROPJOB == False) ), skip run_PG007()" )
+                
+            time.sleep( SLEEP_SECONDS )                      #  sleep before prop_analysis 
+            
+            run_PG008(call_manner=1)                        #  './PG008__property_analysis_completeness.py'
+            run_PG009(call_manner=2)                        #  './PG009__property_analysis_summary.py'
+            run_PG010(call_manner=2)                         #  './PG010__featurizers_train_evaluate.py'
+            
+            run_PG011(call_manner=2)                         #  './PG011__predict_opt_molecules.py'
+            time.sleep( SLEEP_SECONDS )                      #  sleep before evaluate_abundance
+            
+            run_PG012(call_manner=2)                         #  './PG012__Generate_Gnew.py'
+            time.sleep( SLEEP_SECONDS )
+    
+            run_PG013(call_manner=2)                         #   './PG013__MurckoScaffold.py'
+            time.sleep( SLEEP_SECONDS )                    
+            
+            run_PG014(call_manner=2)                         #  './PG014__Energy_Sieve.py'
+            time.sleep( SLEEP_SECONDS ) 
+    
+            run_PG015(call_manner=2)                         #  './PG015__Map-mols-by-FPSimilarity.py'
+            time.sleep( SLEEP_SECONDS )
+        
+        else:
+            # run_PG002()                                      #  './PG002__MaxMinPicker.py'
+            # run_PG003()                                      #  './PG003__bat_sdf_to_com_gs.py'
+            # run_PG004()                                      #  './PG004__bat_qsub_jobs_opt.py'
+            
+            # time.sleep( SLEEP_SECONDS )                      #  sleep before opt_analysis 
+            # run_PG005(call_manner=1)                         #  './PG005__optimization_analysis.py'
+            # run_PG006()                                      #  './PG006__bat_g09log_to_tadfcom.py'
+            # run_PG007()                                      #  './PG007__bat_qsub_jobs_tadf.py'
+            
+            # time.sleep( SLEEP_SECONDS )                      #  sleep before prop_analysis 
+            
+            # run_PG008(call_manner=1)                        #  './PG008__property_analysis_completeness.py'
+            # run_PG009(call_manner=2)                        #  './PG009__property_analysis_summary.py'
+            # run_PG010(call_manner=2)                         #  './PG010__featurizers_train_evaluate.py'
+            
+            # run_PG011(call_manner=2)                         #  './PG011__predict_opt_molecules.py'
+        
+            # time.sleep( SLEEP_SECONDS )                      #  sleep before evaluate_abundance
+            
+            # run_PG012(call_manner=2)                         #  './PG012__Generate_Gnew.py'        
+            # time.sleep( SLEEP_SECONDS )                   
+            
+            # run_PG013(call_manner=2)                         #   './PG013__MurckoScaffold.py'
+            # time.sleep( SLEEP_SECONDS ) 
+            
+            # run_PG014(call_manner=2)                         #  './PG014__Energy_Sieve.py'
+            # time.sleep( SLEEP_SECONDS ) 
+            
+            run_PG015(call_manner=2)                         #  './PG015__Map-mols-by-FPSimilarity.py'
+            time.sleep( SLEEP_SECONDS )
+        
+        
+        # run_evaluate_abundance(call_manner=2)            #  by call method: percentage_lt_criticval() in Metrics module
+        # if (len(abundances) > 0) and ( abs( abundances[-1] - float(PARAS_DIC['ABUNANCE_LIMIT']) ) < 0.01):
+        #     print("\nThe abundance has converged to ABUNANCE_LIMIT.\n")
+        #     os.system("echo  '\nThe abundance has converged to ABUNANCE_LIMIT.\n'      1>>    "    +   SALAM_LOG)
+        #     break
+        # time.sleep( SLEEP_SECONDS )         
+        
+        # run_accumulate_optmols()
+        # if ( (len(num_acc_optmols) > 0) and (num_acc_optmols[-1]  >= int(PARAS_DIC['NUM_ACC_OPTMOLS_LIMIT'])) ):
+        #     print("\nThe num_acc_optmol has converged to NUM_ACC_OPTMOLS_LIMIT.\n")
+        #     os.system("echo  '\nThe num_acc_optmol has converged to NUM_ACC_OPTMOLS_LIMIT.\n'      1>>    "    +   SALAM_LOG)
+        #     break    
+        # time.sleep( SLEEP_SECONDS )
+        
+        # run_accumulate_optmols_S1En( )
+        # time.sleep( SLEEP_SECONDS )        
+    
+        MUTATION_GENERATION += 1
+            
+    
+    
+    #------------------------------------------------------------------------------
+    MUTATION_GENERATION -= 1
+    
+    # #----- call sort_mols_by_SAScores ---------------------------------------------
+    # run_sort_mols_by_SAScores()
+    
+    # #------ call accumulate_optmols_intersection -----------------------------------
+    # run_accumulate_optmols_intersection( )
+    
+    
+    #-----------------------------------------------------------------------------
+    
+    
+    if len(num_replaceable_aromaticCHs) > 0:
+        print("-"*60)
+        print("\nnum_replaceable_aromaticCHs:")
+        for i, num_replaceable_aromaticCH in zip( range(len(num_replaceable_aromaticCHs)),  num_replaceable_aromaticCHs):
+            print("%8d %10.4f"%(i, num_replaceable_aromaticCH))
     else:
-        # run_PG002()                                      #  './PG002__MaxMinPicker.py'
-        # run_PG003()                                      #  './PG003__bat_sdf_to_com_gs.py'
-        # run_PG004()                                      #  './PG004__bat_qsub_jobs_opt.py'
-        
-        # time.sleep( SLEEP_SECONDS )                      #  sleep before opt_analysis 
-        # run_PG005(call_manner=1)                         #  './PG005__optimization_analysis.py'
-        # run_PG006()                                      #  './PG006__bat_g09log_to_tadfcom.py'
-        # run_PG007()                                      #  './PG007__bat_qsub_jobs_tadf.py'
-        
-        # time.sleep( SLEEP_SECONDS )                      #  sleep before prop_analysis 
-        
-        # run_PG008(call_manner=1)                        #  './PG008__property_analysis_completeness.py'
-        # run_PG009(call_manner=2)                        #  './PG009__property_analysis_summary.py'
-        # run_PG010(call_manner=2)                         #  './PG010__featurizers_train_evaluate.py'
-        
-        # run_PG011(call_manner=2)                         #  './PG011__predict_opt_molecules.py'
-    
-        # time.sleep( SLEEP_SECONDS )                      #  sleep before evaluate_abundance
-        
-        # run_PG012(call_manner=2)                         #  './PG012__Generate_Gnew.py'        
-        # time.sleep( SLEEP_SECONDS )                   
-        
-        # run_PG013(call_manner=2)                         #   './PG013__MurckoScaffold.py'
-        # time.sleep( SLEEP_SECONDS ) 
-        
-        # run_PG014(call_manner=2)                         #  './PG014__Energy_Sieve.py'
-        # time.sleep( SLEEP_SECONDS ) 
-        
-        run_PG015(call_manner=2)                         #  './PG015__Map-mols-by-FPSimilarity.py'
-        time.sleep( SLEEP_SECONDS )
+        print("\nlen(num_replaceable_aromaticCHs) > 0 is False.")
     
     
-    # run_evaluate_abundance(call_manner=2)            #  by call method: percentage_lt_criticval() in Metrics module
-    # if (len(abundances) > 0) and ( abs( abundances[-1] - float(PARAS_DIC['ABUNANCE_LIMIT']) ) < 0.01):
-    #     print("\nThe abundance has converged to ABUNANCE_LIMIT.\n")
-    #     os.system("echo  '\nThe abundance has converged to ABUNANCE_LIMIT.\n'      1>>    "    +   SALAM_LOG)
-    #     break
-    # time.sleep( SLEEP_SECONDS )         
+    if (len(abundances) > 0):
+        print("-"*60)
+        print("muation_generation, abundance are:")
+        for i, abundance in zip( range(len(abundances)),  abundances):
+            print("%8d %10.4f"%(i, abundance))
+    else:
+        print("\nlen(abundances) > 0 is False.")
     
-    # run_accumulate_optmols()
-    # if ( (len(num_acc_optmols) > 0) and (num_acc_optmols[-1]  >= int(PARAS_DIC['NUM_ACC_OPTMOLS_LIMIT'])) ):
-    #     print("\nThe num_acc_optmol has converged to NUM_ACC_OPTMOLS_LIMIT.\n")
-    #     os.system("echo  '\nThe num_acc_optmol has converged to NUM_ACC_OPTMOLS_LIMIT.\n'      1>>    "    +   SALAM_LOG)
-    #     break    
-    # time.sleep( SLEEP_SECONDS )
     
-    # run_accumulate_optmols_S1En( )
-    # time.sleep( SLEEP_SECONDS )        
-
-    MUTATION_GENERATION += 1
-        
-
-
-#------------------------------------------------------------------------------
-MUTATION_GENERATION -= 1
-
-# #----- call sort_mols_by_SAScores ---------------------------------------------
-# run_sort_mols_by_SAScores()
-
-# #------ call accumulate_optmols_intersection -----------------------------------
-# run_accumulate_optmols_intersection( )
-
-
-#-----------------------------------------------------------------------------
-
-
-if len(num_replaceable_aromaticCHs) > 0:
-    print("-"*60)
-    print("\nnum_replaceable_aromaticCHs:")
-    for i, num_replaceable_aromaticCH in zip( range(len(num_replaceable_aromaticCHs)),  num_replaceable_aromaticCHs):
-        print("%8d %10.4f"%(i, num_replaceable_aromaticCH))
-else:
-    print("\nlen(num_replaceable_aromaticCHs) > 0 is False.")
-
-
-if (len(abundances) > 0):
-    print("-"*60)
-    print("muation_generation, abundance are:")
-    for i, abundance in zip( range(len(abundances)),  abundances):
-        print("%8d %10.4f"%(i, abundance))
-else:
-    print("\nlen(abundances) > 0 is False.")
-
-
-if (len(num_acc_optmols) > 0):
-    print("-"*60)
-    print("muation_generation, num_acc_optmols are:")
-    for i, num_acc_optmol in zip( range(len(num_acc_optmols)),  num_acc_optmols):
-        print("%8d %10d"%(i, num_acc_optmol))
-else:
-    print("\nlen(num_acc_optmols) > 0 is False.")
-
-
-if (len(num_acc_optmols_S1En) > 0):
-    print("-"*60)
-    print("muation_generation, num_acc_optmols_S1En_R num_acc_optmols_S1En_G num_acc_optmols_S1En_B  are:")
-    for i, num_acc_optmol_S1En in zip( range(len(num_acc_optmols_S1En)),  num_acc_optmols_S1En):
-        print("%8d %8d %8d %8d"%(i, num_acc_optmol_S1En[0], num_acc_optmol_S1En[1], num_acc_optmol_S1En[2]))
-else:
-    print("\nlen(num_acc_optmols_S1En) > 0 is False.")
-
-
-# #---- plot generation Vs abundance, aromaticCHs, num_acc_optmols pictures ----------------
-# df_generation_abundance_aromaticCHs_numaccoptmols = pd.DataFrame(data=zip( range(len(abundances)),  abundances, num_replaceable_aromaticCHs, num_acc_optmols), 
-#                                                                   columns=["generation", "abundance", "aromaticCH", "num_acc_optmols"]
-#                                                                   )
-
-# fig, ax = plt.subplots(1, 1, figsize=(12, 8), sharey=False)
-# df_generation_abundance_aromaticCHs_numaccoptmols.plot(
-#                                                         title='abundance vs generation',
-#                                                         #kind='scatter', 
-#                                                         kind='line', linestyle='-',
-#                                                         x='generation', 
-#                                                         y='abundance', 
-#                                                         color='g', 
-#                                                         alpha=0.95, 
-#                                                         ax=ax,
-#                                                         xlabel='generation', 
-#                                                         ylabel='abundance'
-#                                                         )
-
-# ax.legend(ncol=1, fontsize='x-large', shadow=True)
-# ax.grid(True)
-# fig.show()
-
-
-# fig1, ax1 = plt.subplots(1, 1, figsize=(12, 8), sharey=False)
-# df_generation_abundance_aromaticCHs_numaccoptmols.plot(
-#                                                         title='aromaticCH vs generation',
-#                                                         #kind='scatter', 
-#                                                         kind='line', linestyle='-',
-#                                                         x='generation', 
-#                                                         y='aromaticCH', 
-#                                                         color='r', 
-#                                                         alpha=0.95, 
-#                                                         ax=ax1, 
-#                                                         xlabel='generation',
-#                                                         ylabel='aromaticCH'
-#                                                         )
-
-# ax1.legend(ncol=1, fontsize='x-large', shadow=True)
-# ax1.grid(True)
-# fig1.show()
-
-# fig2, ax2 = plt.subplots(1, 1, figsize=(12, 8), sharey=False)
-# df_generation_abundance_aromaticCHs_numaccoptmols.plot(
-#                                                         title='num_acc_optmols vs generation',
-#                                                         #kind='scatter', 
-#                                                         kind='line', linestyle='-',
-#                                                         x='generation', 
-#                                                         y='num_acc_optmols', 
-#                                                         color='b', 
-#                                                         alpha=0.95, 
-#                                                         ax=ax2, 
-#                                                         xlabel='generation',
-#                                                         ylabel='num_acc_optmols'
-#                                                         )
-
-# ax2.legend(ncol=1, fontsize='x-large', shadow=True)
-# ax2.grid(True)
-# fig2.show()
-
-
-#----- plot_muation_diagram --------------------------------------------------
-plot_muation_diagram(filename='./project/mutation_diagram.csv',
-                     figname='./project/muation-diagram.png',
-                     molsPerRow=3,
-                     subImgSize=(800, 800),
-                     num_of_mols=None
-                     )
-
-
-
-print("\n### End of program: SALAM.\n" )
-
-call_echo_end_program_salam_to_salam_log = "echo -e '\n### END of program: SALAM.\n'      1>>    "    +   SALAM_LOG
-retcode = os.system( call_echo_end_program_salam_to_salam_log )
-print("retcode = ", retcode)
-
-
-end_t0 = datetime.datetime.now()
-elapsed_sec0 = (end_t0 - start_t0).total_seconds()
-print("\nTotal running time of SALAM is : " + "{:.2f}".format(elapsed_sec0/60.) + " min ")
-
-retcode = os.system( "echo  '\nTotal running time of SALAM is :  " +  "{:.2f}".format(elapsed_sec0/60.) + " min   '  "  +  "     1>>    "    +   SALAM_LOG )
-print("retcode = ", retcode)
-
-print("\n### Normal termination of program: SALAM!\n")
+    if (len(num_acc_optmols) > 0):
+        print("-"*60)
+        print("muation_generation, num_acc_optmols are:")
+        for i, num_acc_optmol in zip( range(len(num_acc_optmols)),  num_acc_optmols):
+            print("%8d %10d"%(i, num_acc_optmol))
+    else:
+        print("\nlen(num_acc_optmols) > 0 is False.")
+    
+    
+    if (len(num_acc_optmols_S1En) > 0):
+        print("-"*60)
+        print("muation_generation, num_acc_optmols_S1En_R num_acc_optmols_S1En_G num_acc_optmols_S1En_B  are:")
+        for i, num_acc_optmol_S1En in zip( range(len(num_acc_optmols_S1En)),  num_acc_optmols_S1En):
+            print("%8d %8d %8d %8d"%(i, num_acc_optmol_S1En[0], num_acc_optmol_S1En[1], num_acc_optmol_S1En[2]))
+    else:
+        print("\nlen(num_acc_optmols_S1En) > 0 is False.")
+    
+    
+    # #---- plot generation Vs abundance, aromaticCHs, num_acc_optmols pictures ----------------
+    # df_generation_abundance_aromaticCHs_numaccoptmols = pd.DataFrame(data=zip( range(len(abundances)),  abundances, num_replaceable_aromaticCHs, num_acc_optmols), 
+    #                                                                   columns=["generation", "abundance", "aromaticCH", "num_acc_optmols"]
+    #                                                                   )
+    
+    # fig, ax = plt.subplots(1, 1, figsize=(12, 8), sharey=False)
+    # df_generation_abundance_aromaticCHs_numaccoptmols.plot(
+    #                                                         title='abundance vs generation',
+    #                                                         #kind='scatter', 
+    #                                                         kind='line', linestyle='-',
+    #                                                         x='generation', 
+    #                                                         y='abundance', 
+    #                                                         color='g', 
+    #                                                         alpha=0.95, 
+    #                                                         ax=ax,
+    #                                                         xlabel='generation', 
+    #                                                         ylabel='abundance'
+    #                                                         )
+    
+    # ax.legend(ncol=1, fontsize='x-large', shadow=True)
+    # ax.grid(True)
+    # fig.show()
+    
+    
+    # fig1, ax1 = plt.subplots(1, 1, figsize=(12, 8), sharey=False)
+    # df_generation_abundance_aromaticCHs_numaccoptmols.plot(
+    #                                                         title='aromaticCH vs generation',
+    #                                                         #kind='scatter', 
+    #                                                         kind='line', linestyle='-',
+    #                                                         x='generation', 
+    #                                                         y='aromaticCH', 
+    #                                                         color='r', 
+    #                                                         alpha=0.95, 
+    #                                                         ax=ax1, 
+    #                                                         xlabel='generation',
+    #                                                         ylabel='aromaticCH'
+    #                                                         )
+    
+    # ax1.legend(ncol=1, fontsize='x-large', shadow=True)
+    # ax1.grid(True)
+    # fig1.show()
+    
+    # fig2, ax2 = plt.subplots(1, 1, figsize=(12, 8), sharey=False)
+    # df_generation_abundance_aromaticCHs_numaccoptmols.plot(
+    #                                                         title='num_acc_optmols vs generation',
+    #                                                         #kind='scatter', 
+    #                                                         kind='line', linestyle='-',
+    #                                                         x='generation', 
+    #                                                         y='num_acc_optmols', 
+    #                                                         color='b', 
+    #                                                         alpha=0.95, 
+    #                                                         ax=ax2, 
+    #                                                         xlabel='generation',
+    #                                                         ylabel='num_acc_optmols'
+    #                                                         )
+    
+    # ax2.legend(ncol=1, fontsize='x-large', shadow=True)
+    # ax2.grid(True)
+    # fig2.show()
+    
+    
+    #----- plot_muation_diagram --------------------------------------------------
+    plot_muation_diagram(filename='./project/mutation_diagram.csv',
+                         figname='./project/muation-diagram.png',
+                         molsPerRow=3,
+                         subImgSize=(800, 800),
+                         num_of_mols=None
+                         )
+    
+    
+    
+    print("\n### End of program: SALAM.\n" )
+    
+    call_echo_end_program_salam_to_salam_log = "echo -e '\n### END of program: SALAM.\n'      1>>    "    +   SALAM_LOG
+    retcode = os.system( call_echo_end_program_salam_to_salam_log )
+    print("retcode = ", retcode)
+    
+    
+    end_t0 = datetime.datetime.now()
+    elapsed_sec0 = (end_t0 - start_t0).total_seconds()
+    print("\nTotal running time of SALAM is : " + "{:.2f}".format(elapsed_sec0/60.) + " min ")
+    
+    retcode = os.system( "echo  '\nTotal running time of SALAM is :  " +  "{:.2f}".format(elapsed_sec0/60.) + " min   '  "  +  "     1>>    "    +   SALAM_LOG )
+    print("retcode = ", retcode)
+    
+    print("\n### Normal termination of program: SALAM!\n")
 

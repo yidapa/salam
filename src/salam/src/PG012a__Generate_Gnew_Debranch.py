@@ -12,18 +12,18 @@ import os
 script_wkdir = os.getcwd()
 sys.path.append(script_wkdir)
 
-from module_MD.D_Pi_A_Enumeration import draw_mols
+from salam.module_MD.D_Pi_A_Enumeration import draw_mols
 from rdkit import Chem
 #from rdkit.Chem import AllChem
 
 from tqdm import tqdm
-from module_MD.D_Pi_A_Enumeration import try_embedmolecule
-from module_MD.D_Pi_A_Enumeration import delete_repeated_smiles_of_mols
+from salam.module_MD.D_Pi_A_Enumeration import try_embedmolecule
+from salam.module_MD.D_Pi_A_Enumeration import delete_repeated_smiles_of_mols
 
-#from module_MD.OrganoMetalics_Enumeration import mutations_CH_aromatic
-#from module_MD.OrganoMetalics_Enumeration import mutations_CH_aromatic_termino_H
-from module_MD.OrganoMetalics_Enumeration import  debranch_CR_aromatic
-from module_MD.OrganoMetalics_Enumeration import  mutations_N_to_CH_aromatic
+#from salam.module_MD.OrganoMetalics_Enumeration import mutations_CH_aromatic
+#from salam.module_MD.OrganoMetalics_Enumeration import mutations_CH_aromatic_termino_H
+from salam.module_MD.OrganoMetalics_Enumeration import  debranch_CR_aromatic
+from salam.module_MD.OrganoMetalics_Enumeration import  mutations_N_to_CH_aromatic
 
 
 import subprocess

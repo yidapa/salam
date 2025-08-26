@@ -38,13 +38,13 @@ script_wkdir = os.getcwd()
 sys.path.append(script_wkdir)
 
 
-from module_MD.Metrics import get_intersection_plus_smiles
-from module_MD.Metrics import get_centroid
-# from module_MD.Metrics import compute_similarity_matrix
-from module_MD.Metrics import map_molslibs_by_similarity
-from module_MD.Metrics import draw_mols_and_show
+from salam.module_MD.Metrics import get_intersection_plus_smiles
+from salam.module_MD.Metrics import get_centroid
+# from salam.module_MD.Metrics import compute_similarity_matrix
+from salam.module_MD.Metrics import map_molslibs_by_similarity
+from salam.module_MD.Metrics import draw_mols_and_show
 
-from module_MD.Metrics import load_mols_in_sdf
+from salam.module_MD.Metrics import load_mols_in_sdf
 
 
 #-----------------------------------------------------------------------------

@@ -41,7 +41,7 @@ from rdkit.Chem.rdMolDescriptors import GetMorganFingerprint
 from rdkit import DataStructs
 from rdkit.SimDivFilters.rdSimDivPickers import MaxMinPicker
 
-from module_MD.D_Pi_A_Enumeration import draw_mols
+from salam.module_MD.D_Pi_A_Enumeration import draw_mols
 
 from tqdm import tqdm
 import datetime
@@ -52,7 +52,7 @@ import shutil
 import time
 from joblib import Parallel, delayed
 
-from module_MD.D_Pi_A_Enumeration import try_embedmolecule
+from salam.module_MD.D_Pi_A_Enumeration import try_embedmolecule
 
 
 #-----------------------------------------------------------------------------

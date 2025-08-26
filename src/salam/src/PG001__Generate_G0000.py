@@ -8,14 +8,14 @@ Using scikit-learn with RDKit
 @author: tucy
 """
 
-from module_MD.D_Pi_A_Enumeration import D_A_Enumeration_new
-from module_MD.D_Pi_A_Enumeration import draw_mols
+from salam.module_MD.D_Pi_A_Enumeration import D_A_Enumeration_new
+from salam.module_MD.D_Pi_A_Enumeration import draw_mols
 
 from rdkit import Chem
 from rdkit.Chem import AllChem
 
 from tqdm import tqdm
-from module_MD.D_Pi_A_Enumeration import try_embedmolecule
+from salam.module_MD.D_Pi_A_Enumeration import try_embedmolecule
 
 
 

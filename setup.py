@@ -1,5 +1,5 @@
-"""A Python tool for High-Throughput Virtual Screening of organic molecules
-driven by structural mutation and machine learning.
+"""A Python tool for high-throughput virtual screening of organic molecules
+driven by structural crossover, mutation and machine learning.
 
 See:
 https://github.com/yidapa/salam
@@ -38,11 +38,11 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/guides/single-sourcing-package-version/
-    version="0.0.1a1",  # Required
+    version="0.0.2a5",  # Required
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#summary
-    description="A Python tool for High-Throughput Virtual Screening of organic molecules driven by structural mutation and machine learning.",  # Optional
+    description="A Python tool for high-throughput virtual screening of organic molecules driven by structural crossover, mutation and machine learning.",  # Optional
     # This is an optional longer description of your project that represents
     # the body of text which users will see when they visit PyPI.
     #
@@ -77,7 +77,7 @@ setup(
     author_email="yidapa@yeah.net",  # Optional
     # 
     #
-    # license='MIT',  # Optional
+    license='MIT',  # Optional
     # 
     # Classifiers help users find your project by categorizing it.
     # For a list of valid classifiers, see https://pypi.org/classifiers/
@@ -97,7 +97,6 @@ setup(
         # that you indicate you support Python 3. These classifiers are *not*
         # checked by 'pip install'. See instead 'python_requires' below.
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
@@ -110,7 +109,7 @@ setup(
     # Note that this is a list of additional keywords, separated
     # by commas, to be used to assist searching for the distribution in a
     # larger catalog.
-    keywords="machine learning, high-throughput virtual screening, chemoinformatics, molecular similarity, structural mutation",  # Optional
+    keywords="machine learning, high-throughput virtual screening, chemoinformatics, molecular similarity, structural crossover, structural mutation",  # Optional
     # When your source code is in a subdirectory under the project root, e.g.
     # `src/`, it is necessary to specify the `package_dir` argument.
     package_dir={"": "src"},  # Optional
@@ -130,7 +129,7 @@ setup(
     # 'Programming Language' classifiers above, 'pip install' will check this
     # and refuse to install the project if the version does not match. See
     # https://packaging.python.org/guides/distributing-packages-using-setuptools/#python-requires
-    python_requires=">=3.6, <4",
+    python_requires=">=3.7, <=3.10",
     # 
     # 
     # This field lists other packages that your project depends on to run.
@@ -175,8 +174,12 @@ setup(
     # },
     
     package_data={  # Optional
+            "salam": ["salam*.inp"],
+            "salam.src": ["*.py"],
             "salam.inputScripts": ["*.sh", "*-com"],
-            "salam.project.G0000": ["*.sdf"]
+            "salam.project.G0000": ["*.sdf"],
+            "salam.tests.Crossover-test": ["*.py", "*.csv", "*.smi", "*.txt"],
+            "salam.tests.Mutation-test": ["*.py", "*.csv", "*.smi", "*.txt"],
         },
     
     
@@ -207,7 +210,7 @@ setup(
     },    
     # 
     # 
-    # scripts=['bin/salam.sh'],
+    #scripts=['bin/salam.sh'],
     # 
     # List additional URLs that are relevant to your project as a dict.
     #

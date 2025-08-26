@@ -79,8 +79,8 @@ import matplotlib.pyplot as plt
 from sklearn.impute import SimpleImputer
 import subprocess
 
-from module_MD.D_Pi_A_Enumeration import draw_mols
-from module_MD.Metrics import getmaxminidxs_lt_le_gt_ge_criticval_df
+from salam.module_MD.D_Pi_A_Enumeration import draw_mols
+from salam.module_MD.Metrics import getmaxminidxs_lt_le_gt_ge_criticval_df
 
 #------------------------------------------------------------------------------
 def display_scores(scores):

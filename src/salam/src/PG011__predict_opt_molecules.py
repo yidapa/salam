@@ -45,7 +45,7 @@ import pandas as pd
 from rdkit import Chem
 #from rdkit.Chem import Draw, AllChem
 #from rdkit.Chem import rdDepictor
-from module_MD.D_Pi_A_Enumeration import draw_mols
+from salam.module_MD.D_Pi_A_Enumeration import draw_mols
 import joblib
 from sklearn.impute import SimpleImputer
 import matplotlib.pyplot as plt

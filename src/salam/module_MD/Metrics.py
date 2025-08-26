@@ -12,9 +12,9 @@ import numpy as np
 import pandas as pd
 from rdkit import Chem
 from rdkit.Chem import BRICS
-from module_MD.OrganoMetalics_Enumeration import find_CH_aromatic_idxs
+from salam.module_MD.OrganoMetalics_Enumeration import find_CH_aromatic_idxs
 
-from module_MD.SA_Score import sascorer
+from salam.module_MD.SA_Score import sascorer
 from rdkit.Chem import Draw
 from rdkit.Chem import PandasTools
 import matplotlib.pyplot as plt
@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 import re
 
 import subprocess
-from module_MD.D_Pi_A_Enumeration import write_mols_paralell
+from salam.module_MD.D_Pi_A_Enumeration import write_mols_paralell
 
 from rdkit import DataStructs
 import matplotlib.image as mpimg # mpimg 用于读取图片
