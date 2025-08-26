@@ -1,3 +1,9 @@
 include src/salam/inputScripts/*.sh
 include src/salam/inputScripts/*-com
-include /src/salam/project/G0000/*.sdf
+include src/salam/project/G0000/*.sdf
+include src/salam/tests/Crossover-test/*.py
+include src/salam/tests/Crossover-test/*.smi
+include src/salam/tests/Crossover-test/*.csv
+include src/salam/tests/Mutation-test/*.py
+include src/salam/tests/Mutation-test/*.smi
+include src/salam/tests/Mutation-test/*.csv
