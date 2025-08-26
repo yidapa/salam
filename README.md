@@ -18,7 +18,7 @@
 - [Getting Started](#getting-started)
 - [About Us](#about-us)
 - [Citing SALAM](#citing-salam)
-
+- [Acknoledgements](#acknowledgements)
 ## Requirements
 
 SALAM currently supports Python 3.7 and later versions, and requires these packages on any condition.
@@ -65,7 +65,11 @@ There is still no official SALAM publication, the recommended citation is:
 
 SALAM: an HTVS tool for organic materials. https://github.com/yidapa/salam
 
+## Acknowledgements
 
+The author thanks the financial support of Guizhou Youth Science and Technology Talents Project (KY[2019]086), 
+
+and the research fund of Guiyang University (GYU-KY-2019).
 
 
 [src]: https://github.com/yidapa/salam
